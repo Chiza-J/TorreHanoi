@@ -160,6 +160,7 @@ public class InterfazHanoi extends javax.swing.JFrame {
 
         iniciarTorres();
         timer = new Timer(400, this::mostrarSiguienteMovimiento);
+        
         timer.start();
         // TODO add your handling code here:
     }//GEN-LAST:event_btnGoActionPerformed
