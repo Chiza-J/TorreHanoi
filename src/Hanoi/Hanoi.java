@@ -3,16 +3,21 @@ package Hanoi;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+import javax.swing.JOptionPane;
 
 public class Hanoi {
     private int numDiscos, numPostes;
     private List<int[]> movimientos;
     private Stack<Integer>[] torres;
+    private int movimientoActual;
+    private boolean terminado;
 
     public Hanoi(int numDiscos, int numPostes) {
         this.numDiscos = numDiscos;
         this.numPostes = Math.max(numPostes, 3); 
         this.movimientos = new ArrayList<>();
+        this.movimientoActual = 0;
+        this.terminado = false;
         this.torres = new Stack[this.numPostes];
         for (int i = 0; i < this.numPostes; i++) {
             torres[i] = new Stack<>();
@@ -59,7 +64,29 @@ public class Hanoi {
         moverHanoi(n - 1, aux, destino);
     }
     
-    
+    private void moverDisco(){
+        if (movimientoActual < movimientos.size()){
+            int[] mov= movimientos.get(movimientoActual);
+            int origen = mov[0];
+            int destino = mov[1];   
+            
+            if (!torres[origen].isEmpty()){
+                int disco = torres[origen].pop();
+                if (torres[destino].isEmpty()){
+                    torres[destino].push(disco);
+                    movimientoActual++;            
+                    
+                } else {
+                    torres[origen].push(disco);
+                }
+            }
+        } else if(!terminado){
+            if(torres[numPostes - 1].size() == numDiscos){
+                terminado = true;
+                
+            }
+        }
+    }
 
     private boolean esMovimientoValido(int origen, int destino) {
         return !torres[origen].isEmpty() && (torres[destino].isEmpty() || torres[destino].peek() > torres[origen].peek());
