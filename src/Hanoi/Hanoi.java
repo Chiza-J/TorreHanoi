@@ -3,9 +3,9 @@ package Hanoi;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
-import javax.swing.JOptionPane;
 
 public class Hanoi {
+
     private int numDiscos, numPostes;
     private List<int[]> movimientos;
     private Stack<Integer>[] torres;
@@ -14,17 +14,19 @@ public class Hanoi {
 
     public Hanoi(int numDiscos, int numPostes) {
         this.numDiscos = numDiscos;
-        this.numPostes = Math.max(numPostes, 3); 
+        this.numPostes = Math.max(numPostes, 3);
         this.movimientos = new ArrayList<>();
         this.movimientoActual = 0;
         this.terminado = false;
+
         this.torres = new Stack[this.numPostes];
         for (int i = 0; i < this.numPostes; i++) {
             torres[i] = new Stack<>();
         }
         for (int i = numDiscos; i > 0; i--) {
-            torres[0].push(i); 
+            torres[0].push(i);
         }
+
     }
 
     public List<int[]> resolver() {
@@ -34,18 +36,25 @@ public class Hanoi {
     }
 
     private void resolverHanoi(int n, int origen, int destino, List<Integer> intermedios) {
-        if (n == 0) return;
+        if (n == 0) {
+            return;
+        }
+
         if (intermedios.isEmpty()) {
-            moverHanoi(n, origen, destino);
+
+            int aux = obtenerPaloAuxiliar(origen, destino);
+            resolverHanoi(n - 1, origen, aux, intermedios);
+            realizarMovimiento(origen, destino);
+            resolverHanoi(n - 1, aux, destino, intermedios);
         } else {
-            int k = (int) Math.round(n - Math.sqrt(2 * n + 1)) + 1;
+            // Usar palos intermedios
             int aux = intermedios.remove(0);
-
-            resolverHanoi(k, origen, aux, intermedios);
-            resolverHanoi(n - k, origen, destino, intermedios);
-            resolverHanoi(k, aux, destino, intermedios);
-
-            intermedios.add(0, aux); 
+            resolverHanoi(n - 1, origen, aux, new ArrayList<>(intermedios));
+            if (esMovimientoValido(origen, destino)) {
+                realizarMovimiento(origen, destino);
+            }
+            resolverHanoi(n - 1, aux, destino, new ArrayList<>(intermedios));
+            intermedios.add(0, aux);
         }
     }
 
@@ -63,33 +72,15 @@ public class Hanoi {
         }
         moverHanoi(n - 1, aux, destino);
     }
-    
-    private void moverDisco(){
-        if (movimientoActual < movimientos.size()){
-            int[] mov= movimientos.get(movimientoActual);
-            int origen = mov[0];
-            int destino = mov[1];   
-            
-            if (!torres[origen].isEmpty()){
-                int disco = torres[origen].pop();
-                if (torres[destino].isEmpty()){
-                    torres[destino].push(disco);
-                    movimientoActual++;            
-                    
-                } else {
-                    torres[origen].push(disco);
-                }
-            }
-        } else if(!terminado){
-            if(torres[numPostes - 1].size() == numDiscos){
-                terminado = true;
-                
-            }
-        }
-    }
 
     private boolean esMovimientoValido(int origen, int destino) {
-        return !torres[origen].isEmpty() && (torres[destino].isEmpty() || torres[destino].peek() > torres[origen].peek());
+        if (torres[origen].isEmpty()) {
+            return false;
+        }
+        if (torres[destino].isEmpty()) {
+            return true;
+        }
+        return torres[destino].peek() > torres[origen].peek();
     }
 
     private void realizarMovimiento(int origen, int destino) {
@@ -99,7 +90,9 @@ public class Hanoi {
 
     private int obtenerPaloAuxiliar(int origen, int destino) {
         for (int i = 0; i < numPostes; i++) {
-            if (i != origen && i != destino) return i;
+            if (i != origen && i != destino) {
+                return i;
+            }
         }
         return -1;
     }

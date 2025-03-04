@@ -1,20 +1,17 @@
 package Hanoi;
 
-import java.util.Scanner;
+import java.util.List;
 
 public class Main {
+
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-
-        System.out.print("Ingrese el número de discos: ");
-        int numDiscos = scanner.nextInt();
-
-        System.out.print("Ingrese el número de postes (mínimo 3): ");
-        int numPostes = scanner.nextInt();
-
+        int numDiscos = 6;
+        int numPostes = 4;
         Hanoi hanoi = new Hanoi(numDiscos, numPostes);
-        hanoi.resolver();
+        List<int[]> movimientos = hanoi.resolver();
 
-        scanner.close();
+        for (int[] movimiento : movimientos) {
+            System.out.println("Mover de " + movimiento[0] + " a " + movimiento[1]);
+        }
     }
 }

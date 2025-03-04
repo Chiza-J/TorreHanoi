@@ -145,7 +145,7 @@ public class InterfazHanoi extends javax.swing.JFrame {
         numPostes = Integer.parseInt(txtPalo.getText());
 
         if (numPostes < 3 || numDiscos < 1) {
-            JOptionPane.showMessageDialog(this, "Debe haber al menos 3 palos y 1 disco.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Debe haber al menos Juego con el destino funciona pero no valida el movimiento3 palos y 1 disco.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -159,8 +159,8 @@ public class InterfazHanoi extends javax.swing.JFrame {
         }
 
         iniciarTorres();
-        timer = new Timer(400, this::mostrarSiguienteMovimiento);
-        
+        timer = new Timer(100, this::mostrarSiguienteMovimiento); // Rapidez de 100ms
+        timer.setInitialDelay(0);
         timer.start();
         // TODO add your handling code here:
     }//GEN-LAST:event_btnGoActionPerformed
@@ -176,18 +176,19 @@ public class InterfazHanoi extends javax.swing.JFrame {
         for (int i = 0; i < numPostes; i++) {
             torres[i] = new Stack<>();
             panelesTorres[i] = new JPanel(null);
-            panelesTorres[i].setPreferredSize(new Dimension(120, 300));
+            panelesTorres[i].setPreferredSize(new Dimension(200, 400)); // Tamaño para los palos
             panelesTorres[i].setBackground(Color.WHITE);
 
             palos[i] = new JLabel();
             palos[i].setOpaque(true);
             palos[i].setBackground(Color.BLACK);
-            palos[i].setBounds(50, 50, 10, 200);
+            palos[i].setBounds(95, 50, 10, 300); // Centrar el palo
             panelesTorres[i].add(palos[i]);
 
             Background.add(panelesTorres[i]);
         }
 
+        // Reiniciar discos en el primer palo
         for (int i = numDiscos; i > 0; i--) {
             torres[0].push(i);
         }
@@ -203,13 +204,17 @@ public class InterfazHanoi extends javax.swing.JFrame {
             int origen = mov[0];
             int destino = mov[1];
 
-            if (!torres[origen].isEmpty()) {
+            if (!torres[origen].isEmpty() && esMovimientoValido(origen, destino)) {
                 int disco = torres[origen].pop();
                 torres[destino].push(disco);
                 actualizarInterfaz();
+            } else {
+                timer.stop();
+                JOptionPane.showMessageDialog(this, "Error en movimiento: " + origen + " -> " + destino);
             }
         } else {
             timer.stop();
+            JOptionPane.showMessageDialog(this, "¡Resuelto correctamente!");
         }
     }
 
@@ -218,16 +223,15 @@ public class InterfazHanoi extends javax.swing.JFrame {
             panelesTorres[i].removeAll();
             panelesTorres[i].add(palos[i]);
 
-            int yPos = 250;
+            int yPos = 350;
             for (int disco : torres[i]) {
                 JLabel lblDisco = new JLabel();
                 lblDisco.setOpaque(true);
                 lblDisco.setBackground(discoColors[disco - 1]);
                 lblDisco.setHorizontalAlignment(SwingConstants.CENTER);
-                lblDisco.setForeground(Color.WHITE);
 
-                int ancho = 20 * disco;
-                lblDisco.setBounds(60 - (ancho / 2), yPos, ancho, 20);
+                int ancho = 20 + (15 * disco); // Aumentar tamaño proporcional al disco
+                lblDisco.setBounds(100 - (ancho / 2), yPos, ancho, 20);
                 yPos -= 25;
 
                 panelesTorres[i].add(lblDisco);
@@ -236,6 +240,16 @@ public class InterfazHanoi extends javax.swing.JFrame {
             panelesTorres[i].revalidate();
             panelesTorres[i].repaint();
         }
+    }
+
+    private boolean esMovimientoValido(int origen, int destino) {
+        if (torres[origen].isEmpty()) {
+            return false;
+        }
+        if (torres[destino].isEmpty()) {
+            return true;
+        }
+        return torres[destino].peek() > torres[origen].peek();
     }
 
     /**
