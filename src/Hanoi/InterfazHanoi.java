@@ -184,6 +184,7 @@ public class InterfazHanoi extends javax.swing.JFrame {
             timer.stop();
             JOptionPane.showMessageDialog(this, "¡Resuelto correctamente!");
         }
+        
     }
 
     private void actualizarInterfaz() {

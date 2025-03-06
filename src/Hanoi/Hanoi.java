@@ -11,6 +11,7 @@ public class Hanoi {
     private Stack<Integer>[] torres;
     private int movimientoActual;
     private boolean terminado;
+    private int contador;
 
     public Hanoi(int numDiscos, int numPostes) {
         this.numDiscos = numDiscos;
@@ -32,7 +33,9 @@ public class Hanoi {
     public List<int[]> resolver() {
         movimientos.clear();
         resolverHanoi(numDiscos, 0, numPostes - 1, obtenerPalosIntermedios());
+        
         return movimientos;
+        
     }
 
     private void resolverHanoi(int n, int origen, int destino, List<Integer> intermedios) {
@@ -86,6 +89,7 @@ public class Hanoi {
     private void realizarMovimiento(int origen, int destino) {
         torres[destino].push(torres[origen].pop());
         movimientos.add(new int[]{origen, destino});
+        System.out.println("Movimientos: "+ contador++);
     }
 
     private int obtenerPaloAuxiliar(int origen, int destino) {
